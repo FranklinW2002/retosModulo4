@@ -4,12 +4,35 @@ const url = "http://" + ip + ":" + port + "/";
 
 //http://192.168.100.7:3001/laptops
 export const getAllLaptops = (fn) => {
+  console.log("Prueva")
   fetch(url + "laptops")
     .then((response) => {
       return response.json();
     })
     .then((body) => {
-    console.log(body);
-    fn(body);
+      console.log(body);
+      fn(body);
     });
-};
+}
+
+export const saveLaptopRest = (laptop,fnShowMesage) => {
+  const config = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+
+    },
+    body: JSON.stringify({
+      marca: laptop.marca,
+      modelo: laptop.modelo,
+      procesador: laptop.procesador
+    })
+  }
+
+  fetch(url + "laptops",config)
+    .then(response => response.json())
+    .then(body => {
+      fnShowMesage();
+      console.log(body);
+    })
+}
