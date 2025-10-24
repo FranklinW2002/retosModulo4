@@ -36,3 +36,25 @@ export const saveLaptopRest = (laptop,fnShowMesage) => {
       console.log(body);
     })
 }
+
+export const updateLaptopRest = (laptop,fnShowMesage) => {
+  const config = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+
+    },
+    body: JSON.stringify({
+      marca: laptop.marca,
+      modelo: laptop.modelo,
+      procesador: laptop.procesador
+    })
+  }
+
+  fetch(url + "laptops/"+laptop.id,config)
+    .then(response => response.json())
+    .then(body => {
+      fnShowMesage();
+      console.log(body);
+    })
+}

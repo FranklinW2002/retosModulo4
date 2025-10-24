@@ -1,28 +1,56 @@
 import { View, Text, StyleSheet, Alert } from "react-native"
 import { Input, Button } from "@rneui/base"
 import { useState } from "react"
-import { saveLaptopRest } from "../rest-client/laptop"
+import { saveLaptopRest, updateLaptopRest } from "../rest-client/laptop"
 
-const showMessage = () => {
-    Alert.alert("Confirmacion", "Contacto Guardado")
-}
 
-export const LaptopsFrom = ({navigation}) => {
-    const [marca, setMarca] = useState();
-    const [modelo, setModelo] = useState();
-    const [procesador, setProcesador] = useState();
+
+export const LaptopsFrom = ({ navigation, route }) => {
+    let laptopRetrived = route.params.laptopParam;
+    let isNew = true;
+    if (laptopRetrived != null) {
+        isNew = false;
+    }
+    console.log(laptopRetrived);
+
+    const [marca, setMarca] = useState(isNew?null:laptopRetrived.marca);
+    const [modelo, setModelo] = useState(isNew?null:laptopRetrived.modelo);
+    const [procesador, setProcesador] = useState(isNew?null:laptopRetrived.procesador);
+
+    
+  
+    if (laptopRetrived != null) {
+        isNew = false;
+    }
+
+    const showMessage = () => {
+        Alert.alert("Confirmacion", isNew ? "Laptop Guardado" : "Laptop Actualizado");
+        navigation.goBack();
+    }
 
     const saveLaptop = () => {
         console.log("Laptop guardada");
-        navigation.goBack();
+
         saveLaptopRest(
             {
                 marca: marca,
                 modelo: modelo,
                 procesador: procesador
-            },showMessage
-            
+            }, showMessage
+
         );
+    }
+
+    const updateLaptop=()=>{
+        console.log("actualizando contacto");
+            updateLaptopRest({
+              id: laptopRetrived.id,
+              marca: marca,
+              modelo: modelo,
+              procesador: procesador
+        
+            },
+              showMessage)
     }
     return <View style={styles.container}>
         <Text>Formulario de laptops</Text>
@@ -49,7 +77,7 @@ export const LaptopsFrom = ({navigation}) => {
         />
         <Button
             title="Guardar"
-            onPress={saveLaptop}
+            onPress={isNew?saveLaptop:updateLaptop}
         />
     </View>
 }
