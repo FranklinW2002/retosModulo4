@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Alert } from "react-native"
 import { Input, Button } from "@rneui/base"
 import { useState } from "react"
-import { saveLaptopRest, updateLaptopRest } from "../rest-client/laptop"
+import { saveLaptopRest, updateLaptopRest, deleteLaptopRest } from "../rest-client/laptop"
 
 
 
@@ -13,18 +13,18 @@ export const LaptopsFrom = ({ navigation, route }) => {
     }
     console.log(laptopRetrived);
 
-    const [marca, setMarca] = useState(isNew?null:laptopRetrived.marca);
-    const [modelo, setModelo] = useState(isNew?null:laptopRetrived.modelo);
-    const [procesador, setProcesador] = useState(isNew?null:laptopRetrived.procesador);
+    const [marca, setMarca] = useState(isNew ? null : laptopRetrived.marca);
+    const [modelo, setModelo] = useState(isNew ? null : laptopRetrived.modelo);
+    const [procesador, setProcesador] = useState(isNew ? null : laptopRetrived.procesador);
 
-    
-  
+
+
     if (laptopRetrived != null) {
         isNew = false;
     }
 
-    const showMessage = () => {
-        Alert.alert("Confirmacion", isNew ? "Laptop Guardado" : "Laptop Actualizado");
+    const showMessage = (mensaje) => {
+        Alert.alert("Confirmacion", mensaje);
         navigation.goBack();
     }
 
@@ -40,17 +40,34 @@ export const LaptopsFrom = ({ navigation, route }) => {
 
         );
     }
-
-    const updateLaptop=()=>{
-        console.log("actualizando contacto");
-            updateLaptopRest({
-              id: laptopRetrived.id,
-              marca: marca,
-              modelo: modelo,
-              procesador: procesador
-        
+    const confirmDeleteLaptop = () => {
+        Alert.alert("CONFIRMACION",
+            "Estas seguro que quieres eliminar",
+            [{
+                text: "SI",
+                onPress: deleteLaptop
             },
-              showMessage)
+            { text: "Cancelar" }
+            ]
+        );
+
+    }
+    const deleteLaptop = () => {
+        console.log("invoca al rest de borrar");
+        deleteLaptopRest({
+            id: laptopRetrived.id
+        }, showMessage);
+    }
+    const updateLaptop = () => {
+        console.log("actualizando contacto");
+        updateLaptopRest({
+            id: laptopRetrived.id,
+            marca: marca,
+            modelo: modelo,
+            procesador: procesador
+
+        },
+            showMessage)
     }
     return <View style={styles.container}>
         <Text>Formulario de laptops</Text>
@@ -77,8 +94,12 @@ export const LaptopsFrom = ({ navigation, route }) => {
         />
         <Button
             title="Guardar"
-            onPress={isNew?saveLaptop:updateLaptop}
+            onPress={isNew ? saveLaptop : updateLaptop}
         />
+        {isNew ? <View></View> : <Button
+            title="eliminar"
+            onPress={confirmDeleteLaptop}
+        />}
     </View>
 }
 

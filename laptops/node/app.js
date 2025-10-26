@@ -36,7 +36,7 @@ app.put("/laptops/:idParam", (request, response) => {
 app.delete("/laptops/:idParam", (request, response) => {
   const id = request.params.idParam;
   console.log("id: ", id);
-  response.send();
+  response.send({id:id});
 });
 
 app.listen(puerto, () => {
